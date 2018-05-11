@@ -10,5 +10,13 @@ function review (res) {
     var myReadStream = fs.createReadStream(__dirname + '/review.html' ,'utf8').pipe(res);
 }
 
-module.exports.home = home;
-module.exports.review = review;
+function movie (res, params){
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(params));
+}
+
+module.exports = {
+    home : home,
+    review : review,
+    movie : movie
+}

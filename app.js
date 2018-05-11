@@ -227,6 +227,7 @@ var server = http.createServer(function(req, res){
 server.listen(5000);
 */
 
+/*
 //14. web 伺服器 part 6 重構路由程式碼
 //將程式碼分開，分為
 //一.app        主程式
@@ -244,3 +245,41 @@ handle['/review'] = handler.review;
 
 server.startServer(router.route , handle);
 console.log('Node Server is running on port 5000......');
+
+//1.開啟伺服器 startServer
+//2.讀取 Request ，找出路由
+//3.根據路由到 handler.js 執行不同 function，比如 index.html || review.html || 404 not found
+//4.設定 res 的 狀態及格式，然後回應
+    //res.writeHead(200, {'Content-Type':'text/html'});
+    //var myReadStream = fs.createReadStream(__dirname + '/review.html' ,'utf8').pipe(res);
+*/
+
+
+//15. web 伺服器 part 7 使用 POST 或 GET 請求發送數據
+//POST 如要修改數據，應使用 POST
+//GET  查詢用，因資料會顯示在網址列，不安全
+var router = require('./router');
+var handler = require('./handler');
+var server = require('./server');
+
+var handle = {};
+handle['/'] = handler.home;
+handle['/home'] = handler.home;
+handle['/review'] = handler.review;
+handle['/movie'] = handler.movie;
+
+server.startServer(router.route , handle);
+console.log('Node Server is running on port 5000......');
+
+/*
+//17.package.json
+
+$ npm init                      //初始化
+$ npm install --save express    //會將安裝的包更新到 dependencies ，讓使用者很清楚了解安裝了哪些
+$ npm install --save-dev gulp   //會將安裝的包更新到 -dev ，開發者模式
+$ npm run start                 //使用者入口 scripts 設定    ex:"start" : "nodemon app.js"
+$ npm install                   //自動安裝作者有使用的包
+
+https://www.rails365.net/movies/qing-song-node-js-ji-chu-17-package-json-wen-jian
+*/
+
