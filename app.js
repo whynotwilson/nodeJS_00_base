@@ -85,3 +85,162 @@ var readMe = fs.readFile('./readMe.txt','utf-8',function(err, data){
 console.log('finished!');
 */
 
+
+
+//7.創建和刪除目錄
+/*
+//複製readMe.txt 到 test 資料夾底下
+var fs = require('fs');
+fs.mkdir('test', function() {//首先創建 test 資料夾
+    fs.readFile('readMe.txt' , 'utf8', function(err, data){ //讀取檔案，資料存進 data 參數
+        fs.writeFile('./test/writeMe.txt' , data , function(){//寫入檔案，路徑要寫對
+            console.log('File copy successfully');
+        });
+    });
+});
+
+//刪除目錄
+//fs.rmdirSync('test');
+*/
+
+
+/*
+//8.流和管道
+//好處1；處理數據
+//好處2：提高性能
+//在7.中，如果讀取的檔案很大時，效能會很差，使用流可以一邊讀取數據一邊處理數據，進而提高性能
+//流是個事件實例，所以它擁有事件特性，比如說：可以綁定一個監聽函數
+
+// var fs = require('fs');
+
+// var myReadStream = fs.createReadStream(__dirname + '/readMe.txt');
+// var myWriteStream = fs.createWriteStream(__dirname + '/writeMe.txt');
+
+
+// var writeData = 'hello world';
+// myWriteStream.write(writeData);
+// myWriteStream.end();
+// myWriteStream.on('finish' , function(){
+//     console.log('finished');
+// });
+
+//myReadStream.pipe(myWriteStream); //讀取 readMe.txt 後寫入 writeMe.txt
+*/
+
+/*
+//9.web 伺服器 part 1 介紹
+
+var http = require('http');
+var server = http.createServer(function(req, res){
+    
+    console.log('request received')
+    res.writeHead(200 , {'Content-type': 'text/plain'});
+    res.end('Hello from out application');
+
+});
+
+server.listen(5000);
+*/
+
+/*
+//10. web 伺服器 part 2 響應 json 格式
+var http = require('http');
+var server = http.createServer(function(req, res){
+    
+    console.log('request received')
+
+    var obj = {
+        name : 'Willson',
+        age : 28,
+        job : 'preprogrammer'
+    }
+    res.writeHead(200 , {'Content-type': 'application/json'});
+    res.end(JSON.stringify(obj));
+
+});
+
+server.listen(5000);
+*/
+
+
+/*
+//11.web 伺服器 part 3 響應 html 頁面
+var http = require('http');
+var fs = require('fs');
+
+var server = http.createServer(function(req, res){
+    
+    res.writeHead(200, {'Content-Type':'text/html'});
+    var myReadStream = fs.createReadStream(__dirname + '/index.html' ,'utf8');
+    myReadStream.pipe(res);
+
+});
+
+server.listen(5000);
+*/
+
+/*
+//12.web 伺服器 part 4 用模塊化思想組織程式碼
+
+    function startServer (){
+
+        var http = require('http');
+        var fs = require('fs');
+        var server = http.createServer(function(req, res){
+            res.writeHead(200, {'Content-Type':'text/html'});
+            var myReadStream = fs.createReadStream(__dirname + '/index.html' ,'utf8');
+            myReadStream.pipe(res);
+        });
+        server.listen(5000);
+    }
+
+    //將程式碼移到 function 內，再用 export 導出，之後再用 require 導入就可使用
+    //https://www.rails365.net/movies/qing-song-node-js-ji-chu-12-web-fu-wu-qi-part-4-mo-kuai-hua-si-xiang-zu-zhi-dai-ma-dai-ma
+    export.startServer = startServer;
+
+    //使用方法
+    var server = require('./server');
+    server.startServer();
+
+*/
+
+/*
+//13. web 伺服器 part 5 路由
+var http = require('http');
+var fs = require('fs');
+
+var server = http.createServer(function(req, res){
+
+    if(req.url === '/' || req.url === '/home'){
+        res.writeHead(200, {'Content-Type':'text/html'});
+        var myReadStream = fs.createReadStream(__dirname + '/index.html' ,'utf8').pipe(res);
+    }else if(req.url === '/review'){
+        res.writeHead(200, {'Content-Type':'text/html'});
+        var myReadStream = fs.createReadStream(__dirname + '/review.html' ,'utf8').pipe(res);
+    }else{
+        res.writeHead(404, {'Content-Type':'text/html'});
+        var myReadStream = fs.createReadStream(__dirname + '/404.html' ,'utf8').pipe(res);
+    }
+    
+});
+
+server.listen(5000);
+*/
+
+//14. web 伺服器 part 6 重構路由程式碼
+//將程式碼分開，分為
+//一.app        主程式
+//二.router     路由
+//三.handler    路由的方法
+
+var router = require('./router');
+var handler = require('./handler');
+var server = require('./server');
+
+var handle = {};
+handle['/'] = handler.home;
+handle['/home'] = handler.home;
+handle['/review'] = handler.review;
+
+server.startServer(router.route , handle);
+console.log('Node Server is running on port 5000......');
